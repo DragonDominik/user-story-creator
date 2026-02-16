@@ -7,38 +7,46 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="flex flex-col min-h-screen">
+    <header class="py-2 bg-gray-100">
+      <div class="text-center uppercase font-bold">User Story Creator</div>
+    </header>
+
     <!-- Buttons -->
-    <Header>
-        <div class="p-4 flex flex-row items-center justify-center gap-4 bg-gray-100">
-          <button
-            id="newTableButton"
-            class="bg-blue-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-blue-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
-          >
-            Új tábla hozzáadása
-          </button>
-          <button
-            id="exportButton"
-            class="bg-blue-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-blue-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
-          >
-            Táblázatok exportálása
-          </button>
-          <button
-            id="importButton"
-            class="bg-blue-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-blue-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
-          >
-            Táblázatok importálása
-          </button>
-        </div>
-    </Header>
+    <div class="p-4 flex flex-row items-center justify-center gap-4">
+      <button
+        id="newTableButton"
+        class="bg-stone-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-stone-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
+      >
+        Új tábla hozzáadása
+      </button>
+      <button
+        id="exportButton"
+        class="bg-stone-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-stone-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
+      >
+        Táblázatok exportálása
+      </button>
+      <button
+        id="importButton"
+        class="bg-stone-500 px-4 py-2 rounded-lg hover:scale-[1.05] hover:bg-stone-600 transition-all duration-300 active:scale-[0.95] active:bg-gray-700 text-lg font-bold"
+      >
+        Táblázatok importálása
+      </button>
+    </div>
 
     <!-- Table container expands -->
-    <div id="tableContainer" class="w-full flex-1 flex flex-col items-center justify-start gap-8 my-8">Adj hozzá egy táblát a kezdéshez!</div>
-
-    <script type="module" src="./scripts/main.js"></script>
+    <div
+      id="tableContainer"
+      class="w-full flex-1 flex flex-col items-center justify-start gap-8 my-4"
+    >
+      <div id="addTableMessage">Adj hozzá egy táblát a kezdéshez!</div>
+    </div>
 
     <!-- Footer -->
     <footer class="w-full text-center py-4 bg-gray-100 text-gray-700">
-      Készítette: <a href="https://github.com/DragonDominik" class="font-bold font-black">@dragondominik</a>
+      Készítette:
+      <a href="https://github.com/DragonDominik" class="font-bold font-black">@dragondominik</a>
     </footer>
+
+    <script type="module" src="./scripts/main.js"></script>
   </body>
 </html>

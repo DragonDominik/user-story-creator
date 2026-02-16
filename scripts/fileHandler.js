@@ -77,9 +77,10 @@ function loadTablesFromData(data, getTableNumber, setTableNumber) {
   // get current table id
   let currentTableNumber = getTableNumber();
 
-  if (currentTableNumber == 0) {
-    const container = document.querySelector("#tableContainer");
-    container.textContent = "";
+  const message = container.querySelector("#addTableMessage");
+
+  if (message) {
+    message.remove();
   }
 
   data.tables.forEach((tableData) => {

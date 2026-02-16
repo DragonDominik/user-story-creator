@@ -137,4 +137,11 @@ function delTable(container, tableNum) {
       child.remove();
     }
   });
+
+  if (container.children.length === 0 && !container.querySelector("#addTableMessage")) {
+    const message = document.createElement("div");
+    message.id = "addTableMessage";
+    message.innerText = "Adj hozzá egy táblát a kezdéshez!";
+    container.appendChild(message);
+  }
 }

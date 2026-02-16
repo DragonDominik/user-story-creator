@@ -9,9 +9,11 @@ const newTableButton = document.querySelector("#newTableButton");
 newTableButton.addEventListener("click", startAddingTables);
 
 function startAddingTables() {
-  if (tableNumber == 0) {
-    const container = document.querySelector("#tableContainer");
-    container.textContent = "";
+  const container = document.querySelector("#tableContainer");
+  const message = container.querySelector("#addTableMessage");
+ 
+  if(message){
+    message.remove();
   }
 
   addTable(incrementTableNumber());
