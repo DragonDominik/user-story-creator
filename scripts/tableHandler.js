@@ -8,7 +8,7 @@ export function addTable(tableNumber) {
 
   table.innerHTML = `
       <thead>
-        <tr class="bg-[#4A90E2] font-normal">
+        <tr style="background-color: #4A90E2; font-weight: normal">
           <th class="border border-black px-1 py-2 w-[25%] font-normal">As text</th>
           <th class="border border-black px-1 py-2 w-[10%] font-normal"></th>
           <th class="border border-black px-1 py-2 w-[65%] font-normal">Leírás</th>
@@ -17,23 +17,23 @@ export function addTable(tableNumber) {
       <tbody>
         <tr style="background-color: #B0D4FF">
           <td class="border border-black w-[25%]" rowspan="3">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[3em] max-h-[1000em] resize-none bg-transparent box-border p-1">text</textarea>
+            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
           </td>
           <td class="border border-black text-center w-[10%] font-bold">GIVEN</td>
           <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1">text</textarea>
+            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
           </td>
         </tr>
         <tr style="background-color: #B0D4FF">
           <td class="border border-black text-center w-[10%] font-bold">WHEN</td>
           <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1">text</textarea>
+            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
           </td>
         </tr>
         <tr style="background-color: #B0D4FF">
           <td class="border border-black text-center w-[10%] font-bold">THEN</td>
           <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1">text</textarea>
+            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
           </td>
         </tr>
       </tbody>
@@ -58,9 +58,13 @@ export function addTable(tableNumber) {
   const delTableButton = createButton("Tábla törlése");
   delTableButton.addEventListener("click", () => delTable(container, tableBox.dataset.tableId));
 
+  const screenshotButton = createButton("Word-be másol");
+  screenshotButton.addEventListener("click", () => screenshotComponent(table));
+
   buttonRow.appendChild(addRowButton);
   buttonRow.appendChild(delRowButton);
   buttonRow.appendChild(delTableButton);
+  buttonRow.appendChild(screenshotButton);
   tableBox.append(buttonRow);
 
   container.appendChild(tableBox);
@@ -94,7 +98,8 @@ function addRows(table) {
       const textarea = document.createElement("textarea");
       textarea.oninput = () => resizeTextArea(textarea);
       textarea.className =
-        "w-full max-w-full min-h-[3em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+        "w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+      textarea.rows = 1;
       textarea.value = "text";
       tdMain.appendChild(textarea);
       tr.appendChild(tdMain);
@@ -111,6 +116,7 @@ function addRows(table) {
     textareaDesc.oninput = () => resizeTextArea(textareaDesc);
     textareaDesc.className =
       "w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+    textareaDesc.rows = 1;
     textareaDesc.value = "text";
     tdDesc.appendChild(textareaDesc);
     tr.appendChild(tdDesc);
@@ -144,4 +150,57 @@ function delTable(container, tableNum) {
     message.innerText = "Adj hozzá egy táblát a kezdéshez!";
     container.appendChild(message);
   }
+}
+
+
+async function screenshotComponent(table) {
+    if (!navigator.clipboard || !window.ClipboardItem) {
+        alert("A bőngésződ nem támogatja a clipboard API-t. Használj inkább Chrome/Firefox-ot.");
+        return;
+    }
+
+    try {
+        const tableClone = table.cloneNode(true);
+        tableClone.style.width = "100%";
+        tableClone.style.borderCollapse = "collapse";
+
+        const rows = tableClone.querySelectorAll("tr");
+        if (rows.length > 0) {
+            const firstRowCells = rows[0].querySelectorAll("th, td");
+            if (firstRowCells.length >= 3) {
+                // first 2 col width
+                firstRowCells[0].style.width = "25%";
+                firstRowCells[1].style.width = "15%";
+            }
+        }
+
+        tableClone.querySelectorAll("td, th").forEach(cell => {
+            const s = getComputedStyle(cell);
+            cell.style.padding = s.padding;
+            cell.style.border = s.border || "1px solid black";
+            cell.style.textAlign = s.textAlign;
+            cell.style.verticalAlign = s.verticalAlign;
+        });
+
+        //replace textareas
+        tableClone.querySelectorAll("input, textarea").forEach(input => {
+            const span = document.createElement("span");
+            span.textContent = input.value;
+            span.style.font = getComputedStyle(input).font;
+            input.replaceWith(span);
+        });
+
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                "text/html": new Blob([tableClone.outerHTML], { type: "text/html" }),
+                "text/plain": new Blob([tableClone.innerText], { type: "text/plain" })
+            })
+        ]);
+
+        alert("Tábla kimásolva MS WORD formátumra!");
+    }
+    catch (err) {
+        console.error(err);
+        alert("Hiba történt! Próbáld újra!");
+    }
 }
