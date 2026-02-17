@@ -3,8 +3,8 @@ export function addTable(tableNumber) {
 
   //table
   const table = document.createElement("table");
-  table.className = "w-[60%] table-auto border-collapse border border-black text-left mb-2";
-  table.dataset.rowNumber = 1;
+  table.className = "w-[800px] table-auto border-collapse border border-black text-left mb-2";
+  table.dataset.rowNumber = 0;
 
   table.innerHTML = `
       <thead>
@@ -15,27 +15,6 @@ export function addTable(tableNumber) {
         </tr>
       </thead>
       <tbody>
-        <tr style="background-color: #B0D4FF">
-          <td class="border border-black w-[25%]" rowspan="3">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
-          </td>
-          <td class="border border-black text-center w-[10%] font-bold">GIVEN</td>
-          <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
-          </td>
-        </tr>
-        <tr style="background-color: #B0D4FF">
-          <td class="border border-black text-center w-[10%] font-bold">WHEN</td>
-          <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
-          </td>
-        </tr>
-        <tr style="background-color: #B0D4FF">
-          <td class="border border-black text-center w-[10%] font-bold">THEN</td>
-          <td class="border border-black w-[65%]">
-            <textarea oninput="resizeTextArea(this)" class="w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1" rows="1">text</textarea>
-          </td>
-        </tr>
       </tbody>
     `;
 
@@ -56,16 +35,16 @@ export function addTable(tableNumber) {
   delRowButton.addEventListener("click", () => delRows(table));
 
   const delTableButton = createButton("Tábla törlése");
-  delTableButton.addEventListener("click", () => delTable(container, tableBox.dataset.tableId));
+  delTableButton.addEventListener("click", () => delTable(container, tableBox));
 
   const screenshotButton = createButton("Word-be másol");
   screenshotButton.addEventListener("click", () => screenshotComponent(table));
 
-  buttonRow.appendChild(addRowButton);
-  buttonRow.appendChild(delRowButton);
-  buttonRow.appendChild(delTableButton);
-  buttonRow.appendChild(screenshotButton);
+  buttonRow.append(addRowButton, delRowButton, delTableButton, screenshotButton);
   tableBox.append(buttonRow);
+
+  //initial rows
+  addRows(table);
 
   container.appendChild(tableBox);
 }
@@ -137,12 +116,8 @@ function delRows(table) {
   table.dataset.rowNumber--;
 }
 
-function delTable(container, tableNum) {
-  [...container.children].forEach((child) => {
-    if (child.dataset.tableId == tableNum) {
-      child.remove();
-    }
-  });
+function delTable(container, tableBox) {
+  tableBox.remove();
 
   if (container.children.length === 0 && !container.querySelector("#addTableMessage")) {
     const message = document.createElement("div");
@@ -152,55 +127,53 @@ function delTable(container, tableNum) {
   }
 }
 
-
 async function screenshotComponent(table) {
-    if (!navigator.clipboard || !window.ClipboardItem) {
-        alert("A bőngésződ nem támogatja a clipboard API-t. Használj inkább Chrome/Firefox-ot.");
-        return;
+  if (!navigator.clipboard || !window.ClipboardItem) {
+    alert("A bőngésződ nem támogatja a clipboard API-t. Használj inkább Chrome/Firefox-ot.");
+    return;
+  }
+
+  try {
+    const tableClone = table.cloneNode(true);
+    tableClone.style.width = "100%";
+    tableClone.style.borderCollapse = "collapse";
+
+    const rows = tableClone.querySelectorAll("tr");
+    if (rows.length > 0) {
+      const firstRowCells = rows[0].querySelectorAll("th, td");
+      if (firstRowCells.length >= 3) {
+        // first 2 col width
+        firstRowCells[0].style.width = "25%";
+        firstRowCells[1].style.width = "15%";
+      }
     }
 
-    try {
-        const tableClone = table.cloneNode(true);
-        tableClone.style.width = "100%";
-        tableClone.style.borderCollapse = "collapse";
+    tableClone.querySelectorAll("td, th").forEach((cell) => {
+      const s = getComputedStyle(cell);
+      cell.style.padding = s.padding;
+      cell.style.border = s.border || "1px solid black";
+      cell.style.textAlign = s.textAlign;
+      cell.style.verticalAlign = s.verticalAlign;
+    });
 
-        const rows = tableClone.querySelectorAll("tr");
-        if (rows.length > 0) {
-            const firstRowCells = rows[0].querySelectorAll("th, td");
-            if (firstRowCells.length >= 3) {
-                // first 2 col width
-                firstRowCells[0].style.width = "25%";
-                firstRowCells[1].style.width = "15%";
-            }
-        }
+    //replace textareas
+    tableClone.querySelectorAll("input, textarea").forEach((input) => {
+      const span = document.createElement("span");
+      span.textContent = input.value;
+      span.style.font = getComputedStyle(input).font;
+      input.replaceWith(span);
+    });
 
-        tableClone.querySelectorAll("td, th").forEach(cell => {
-            const s = getComputedStyle(cell);
-            cell.style.padding = s.padding;
-            cell.style.border = s.border || "1px solid black";
-            cell.style.textAlign = s.textAlign;
-            cell.style.verticalAlign = s.verticalAlign;
-        });
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "text/html": new Blob([tableClone.outerHTML], { type: "text/html" }),
+        "text/plain": new Blob([tableClone.innerText], { type: "text/plain" }),
+      }),
+    ]);
 
-        //replace textareas
-        tableClone.querySelectorAll("input, textarea").forEach(input => {
-            const span = document.createElement("span");
-            span.textContent = input.value;
-            span.style.font = getComputedStyle(input).font;
-            input.replaceWith(span);
-        });
-
-        await navigator.clipboard.write([
-            new ClipboardItem({
-                "text/html": new Blob([tableClone.outerHTML], { type: "text/html" }),
-                "text/plain": new Blob([tableClone.innerText], { type: "text/plain" })
-            })
-        ]);
-
-        alert("Tábla kimásolva MS WORD formátumra!");
-    }
-    catch (err) {
-        console.error(err);
-        alert("Hiba történt! Próbáld újra!");
-    }
+    alert("Tábla kimásolva MS WORD formátumra!");
+  } catch (err) {
+    console.error(err);
+    alert("Hiba történt! Próbáld újra!");
+  }
 }
