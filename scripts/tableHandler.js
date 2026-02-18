@@ -28,10 +28,10 @@ export function addTable(tableNumber) {
   buttonRow.className = "flex flex-row gap-4 w-full items-center justify-center";
 
   //buttons
-  const addRowButton = createButton("Sor hozzáadása");
+  const addRowButton = createButton("Eset hozzáadása");
   addRowButton.addEventListener("click", () => addRows(table));
 
-  const delRowButton = createButton("Sor törlése");
+  const delRowButton = createButton("Eset törlése");
   delRowButton.addEventListener("click", () => delRows(table));
 
   const delTableButton = createButton("Tábla törlése");
