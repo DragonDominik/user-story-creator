@@ -114,8 +114,9 @@ function loadTablesFromData(data, getTableNumber, setTableNumber) {
           const textarea = document.createElement("textarea");
           textarea.oninput = () => resizeTextArea(textarea);
           textarea.className =
-            "w-full max-w-full min-h-[3em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+            "w-full max-w-full min-h-0 max-h-[1000em] resize-none bg-transparent box-border p-1";
           textarea.value = rowData.asText;
+          textarea.rows = 1;
 
           tdMain.appendChild(textarea);
           tr.appendChild(tdMain);
@@ -132,8 +133,9 @@ function loadTablesFromData(data, getTableNumber, setTableNumber) {
         const textareaDesc = document.createElement("textarea");
         textareaDesc.oninput = () => resizeTextArea(textareaDesc);
         textareaDesc.className =
-          "w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+          "w-full max-w-full min-h-0 max-h-[1000em] resize-none bg-transparent box-border p-1";
         textareaDesc.value = values[stepIndex];
+        textareaDesc.rows = 1;
 
         tdDesc.appendChild(textareaDesc);
         tr.appendChild(tdDesc);
@@ -144,7 +146,11 @@ function loadTablesFromData(data, getTableNumber, setTableNumber) {
 
     // resize all textareas
     tableBox.querySelectorAll("textarea").forEach((textarea) => {
-      window.resizeTextArea(textarea);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.resizeTextArea(textarea);
+        });
+      });
     });
 
     currentTableNumber++;

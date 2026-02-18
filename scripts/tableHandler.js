@@ -77,7 +77,7 @@ function addRows(table) {
       const textarea = document.createElement("textarea");
       textarea.oninput = () => resizeTextArea(textarea);
       textarea.className =
-        "w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+        "w-full max-w-full min-h-0 max-h-[1000em] resize-none bg-transparent box-border p-1";
       textarea.rows = 1;
       textarea.value = "text";
       tdMain.appendChild(textarea);
@@ -94,7 +94,7 @@ function addRows(table) {
     const textareaDesc = document.createElement("textarea");
     textareaDesc.oninput = () => resizeTextArea(textareaDesc);
     textareaDesc.className =
-      "w-full max-w-full min-h-[1em] max-h-[1000em] resize-none bg-transparent box-border p-1";
+      "w-full max-w-full min-h-0 max-h-[1000em] resize-none bg-transparent box-border p-1";
     textareaDesc.rows = 1;
     textareaDesc.value = "text";
     tdDesc.appendChild(textareaDesc);
