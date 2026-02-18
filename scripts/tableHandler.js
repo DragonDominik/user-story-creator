@@ -9,7 +9,7 @@ export function addTable(tableNumber) {
   table.innerHTML = `
       <thead>
         <tr style="background-color: #4A90E2; font-weight: normal">
-          <th class="border border-black px-1 py-2 w-[25%] font-normal">As text</th>
+          <th class="border border-black px-1 py-2 w-[25%] font-normal">Eset</th>
           <th class="border border-black px-1 py-2 w-[10%] font-normal"></th>
           <th class="border border-black px-1 py-2 w-[65%] font-normal">Leírás</th>
         </tr>
